@@ -11,6 +11,7 @@ const topics=[
 ];
 export function planPhotos(p){const paras=p.body.split(/\n\s*\n/).filter(x=>x.trim());const all=p.title+' '+p.body;
  let picked=topics.map(t=>({...t,score:t.words.reduce((n,w)=>n+(all.includes(w)?1:0),0)})).sort((a,b)=>b.score-a.score).slice(0,p.count);
+ if(!picked.some(t=>t.score>0))picked=[{q:p.title.slice(0,80)||'landscape',words:[p.title]}];
  const manual=p.keywords?.split(',').map(x=>x.trim()).filter(Boolean).slice(0,p.count)||[];
  if(manual.length)picked=manual.map(q=>({q,words:topics.find(t=>t.q===q)?.words||[q]}));
  const occupied=new Set();return picked.map((t,k)=>{let best=-1,score=0;paras.forEach((s,i)=>{const n=t.words.reduce((n,w)=>n+(s.includes(w)?1:0),0);if(!occupied.has(i)&&n>score){best=i;score=n}});if(best<0)best=Math.min(Math.max(paras.length-1,0),Math.floor(paras.length*k/p.count));occupied.add(best);return {keyword:t.q.slice(0,100),afterParagraph:best}})
