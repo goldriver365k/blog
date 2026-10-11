@@ -52,4 +52,4 @@ export async function handle(request,env=process.env,upstream=fetch){
  }catch{return reply({error:'OpenAI 응답 시간 초과 또는 연결 실패입니다. 요청이 처리됐을 수도 있으므로 바로 반복하지 마세요.'},504)}
 }
 export default request=>handle(request);
-export const config={path:'/api/*'};
+export const config={path:['/api/ai/status','/api/ai/generate','/api/auth/login','/api/auth/logout']};

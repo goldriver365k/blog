@@ -35,7 +35,7 @@
 - Netlify의 요금제 사용 한도와 OpenAI API 비용은 각각 적용됩니다. 무제한 무료 서비스가 아닙니다.
 - 원고는 해당 기기의 브라우저에 저장됩니다. 주기적으로 백업하세요.
 - 네이버 자동 게시나 예약 등록은 구현하지 않습니다. 공식 편집기에서 사용자가 최종 발행합니다.
-- 무료 사진 검색은 Pexels API 키를 현재 탭에만 입력합니다. 검색 결과의 이용 조건을 확인하세요.
+- 사진은 Wikimedia Commons에서 추가 키 없이 검색합니다. 원고 생성 후 2~3장 자동 검색·배치, 기존 원고는 전용 버튼으로 검색합니다. CC BY, CC0, Public domain 표기가 확인된 JPEG/PNG/WebP만 선택하고 원본 출처와 저작자·라이선스를 표시합니다. 게시 전 원본의 이용 조건과 관련성을 확인하세요. 사진 결과가 부족하면 적은 수만 배치됩니다.
 
 ## 개발
 
@@ -46,6 +46,6 @@ npm run build
 npm test
 ```
 
-`public/index.html`은 화면, `netlify/functions/api.mjs`는 관리자 인증 및 OpenAI 서버 호출, `netlify.toml`은 배포 설정입니다. `/api/*` 경로는 Netlify Function의 custom path로 처리됩니다. Sites 전용 인증 헤더나 배포 설정에 의존하지 않습니다.
+`public/index.html`은 화면, `netlify/functions/api.mjs`는 관리자 인증 및 OpenAI 서버 호출, `netlify.toml`은 배포 설정입니다. `/api/ai/*`, `/api/auth/*`, `/api/photos/search` 경로는 Netlify Function의 custom path로 처리됩니다. Sites 전용 인증 헤더나 배포 설정에 의존하지 않습니다.
 
 테스트는 모의 응답만 사용하고 실제 키나 유료 요청 없이 검증합니다. 실제 Netlify 배포와 OpenAI 원고 생성은 환경 변수 등록 후 별도로 확인해야 합니다.
