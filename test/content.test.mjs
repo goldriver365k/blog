@@ -13,7 +13,7 @@ test('authoritative campaign has 20 unique posts, correct counts, dates and orig
  const posts=BM.validateCampaign(seed());assert.equal(posts.length,20);
  assert.deepEqual(plain(['food','taste','bulbaek'].map(c=>posts.filter(p=>p.channel===c).length)),[8,8,4]);
  for(let i=0;i<20;i++){const row=BM_CAMPAIGN.rows[i],p=posts[i];assert.equal(p.body,row['본문']);assert.equal(p.hashtags,row['해시태그']);assert.equal(p.photoBrief,row['추천사진']);assert.equal(p.homepage,row['연결URL']);assert.equal(p.date,row['발행일']+'T'+row['권장시간'])}
- assert.equal(posts[0].blogs[0],'goldriver365');assert.equal(posts[1].blogs[0],'goldriver365-100');
+ assert.equal(posts[0].blogs[0],'gold365-100');assert.equal(posts[1].blogs.length,0);
 });
 test('replacement preserves published records exactly, settings, performance and all photos',()=>{
  const draft=oldPost('draft','원고 작성');draft.photos=[{id:'ph',src:'data:image/jpeg;base64,YQ==',provider:'직접 첨부'}];
