@@ -18,3 +18,18 @@ test('SEO keywords are deduplicated, capped and passed as data',async()=>{const 
 test('general series uses requested topic and notes',async()=>{const cookie=await login();const r=await handle(request('/api/ai/generate',{body:{title:'서울 여행',series:'여행일기',count:2,topicType:'general',brief:'가족과 박물관을 방문함'},cookie}),env,async(_url,options)=>{const body=JSON.parse(options.body);assert.ok(body.instructions.includes('구성과 독자층은 주제에 맞게'));assert.equal(JSON.parse(body.input).brief,'가족과 박물관을 방문함');return new Response(JSON.stringify({status:'completed',output:[{content:[{type:'output_text',text:'서울 여행'}]}]}))});assert.equal(r.status,200)});
 
 test('regeneration preserves title instructions and accepts tone and length without extra calls',async()=>{const cookie=await login();let called=0;const response=await handle(request('/api/ai/generate',{cookie,body:{title:'유지할 제목',series:'창업',count:3,topicType:'food',seoKeywords:'식당 창업',preserveTitle:true,tone:'친근한 대화체',length:'짧게'}}),env,async(url,options)=>{called++;const payload=JSON.parse(options.body);assert.ok(payload.instructions.includes('제목은 출력하거나 바꾸지'));assert.ok(payload.instructions.includes('600~900자'));assert.ok(payload.instructions.includes('친근한 대화체'));return Response.json({status:'completed',output:[{content:[{type:'output_text',text:'본문만 작성'}]}]})});assert.equal(response.status,200);assert.equal(called,1);const invalid=await handle(request('/api/ai/generate',{cookie,body:{title:'제목',series:'',count:3,tone:'invalid'}}),env);assert.equal(invalid.status,400)});
+
+test('brand mode applies short writing rules to each channel and passes correction as data',async()=>{
+ const cookie=await login();
+ for(const topicType of ['taste','food','bulbaek']){
+  const r=await handle(request('/api/ai/generate',{body:{title:'기존 주제',series:'연재',count:2,topicType,brandDraft:true,brandFeedback:'분량 조정'},cookie}),env,async(_url,options)=>{
+   const payload=JSON.parse(options.body);
+   assert.match(payload.instructions,/500~800자/);
+   assert.match(payload.instructions,/직화 돼지불백덮밥 전문점/);
+   assert.match(payload.instructions,/해시태그 8~10개/);
+   assert.equal(JSON.parse(payload.input).revision,'분량 조정');
+   return Response.json({status:'completed',output:[{content:[{type:'output_text',text:'{}'}]}]});
+  });
+  assert.equal(r.status,200);
+ }
+});

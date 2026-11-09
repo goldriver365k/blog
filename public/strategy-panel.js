@@ -37,10 +37,11 @@ async function saveStrategyPlan(openFirst){
  if(!added.length)return alert('추가할 주제를 선택하세요. 이미 일정에 등록된 주제는 제외됩니다.');
  try{await commitContent(next,'화산불백 전략 일정 추가');strategyPreview=[];strategyStart=proposedStart();strategyMessage=added.length+'편을 추가했습니다. 기존 원고와 발행 일정은 보존했습니다.';if(openFirst)selectPost(added[0].id);else render()}catch(e){alert(e.message)}
 }
-function acceptStrategyDraft(p,body){
- const issue=BS.draftIssue({...p,body},data.posts);if(issue)throw Error(issue+' 기존 원고는 유지했습니다.');
+function acceptStrategyDraft(p,body,generated=null){
+ const issue=BS.draftIssue({...p,title:generated?.title||p.title,body},data.posts);if(issue)throw Error(issue+' 기존 원고는 유지했습니다.');
  const previous={...p};
- p.body=body;p.hashtags=BS.tags(p,body);
+ p.body=body;p.hashtags=generated?generated.hashtags.join(' '):BS.tags(p,body);
+ if(generated){p.title=generated.title;p.seoKeywords=generated.keywords.join(', ');p.homepage=BW.home;}
  if(!p.photoBrief?.trim())p.photoBrief=BS.photos(p.channel,(p.seoKeywords||'').split(',')[0].trim()).join('\n');
  p.status='검수 대기';p.reviewed=false;delete p.approvedAt;
  if(!save()){for(const k of Object.keys(p))if(!Object.hasOwn(previous,k))delete p[k];Object.assign(p,previous);throw Error('저장하지 못했습니다. 기존 원고를 유지했습니다.')}
