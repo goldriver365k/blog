@@ -90,3 +90,13 @@ function archiveAttachedPhoto(i){
  if(!save()){data.mediaLibrary.pop();return}
  toast('사진을 보관했습니다. 사진 보관함에서 자동 배치 검색어를 입력하세요.');
 }
+
+function deleteArchivePhoto(i){
+ const previous=data.mediaLibrary,ph=previous?.[i];
+ if(!ph)return;
+ if(!confirm((ph.alt||ph.sourcePost||'선택한 사진')+'을(를) 보관함에서 삭제할까요? 원고에 첨부된 사진은 남습니다.'))return;
+ data.mediaLibrary=previous.filter((_,index)=>index!==i);
+ if(!save()){data.mediaLibrary=previous;return}
+ render();
+ toast('보관함에서 사진을 삭제했습니다.');
+}
