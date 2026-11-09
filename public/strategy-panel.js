@@ -44,6 +44,7 @@ function acceptStrategyDraft(p,body){
  if(!p.photoBrief?.trim())p.photoBrief=BS.photos(p.channel,(p.seoKeywords||'').split(',')[0].trim()).join('\n');
  p.status='검수 대기';p.reviewed=false;delete p.approvedAt;
  if(!save()){for(const k of Object.keys(p))if(!Object.hasOwn(previous,k))delete p[k];Object.assign(p,previous);throw Error('저장하지 못했습니다. 기존 원고를 유지했습니다.')}
+ return fillLibraryPhotos(p);
 }
 async function setBrandReview(checked){
  const p=current();if(!p||approving)return;
